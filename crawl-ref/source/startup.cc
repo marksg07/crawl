@@ -1204,8 +1204,9 @@ static void _choose_arena_teams(newgame_def& choice,
     resumable_line_reader reader(buf, sizeof(buf));
     bool done = false, cancel;
     auto prompt_ui = make_shared<Text>();
+    auto popup = make_shared<ui::Popup>(prompt_ui);
 
-    prompt_ui->on(Widget::slots.event, [&](wm_event ev)  {
+    popup->on(Widget::slots.event, [&](wm_event ev)  {
         if (ev.type != WME_KEYDOWN)
             return false;
         int key = ev.key.keysym.sym;
@@ -1215,8 +1216,7 @@ static void _choose_arena_teams(newgame_def& choice,
         cancel = !!key;
         return done = true;
     });
-
-    auto popup = make_shared<ui::Popup>(prompt_ui);
+    ui::set_focused_widget(popup.get());
     ui::push_layout(move(popup));
     while (!done && !crawl_state.seen_hups)
     {
